@@ -49,8 +49,6 @@
 #include "ns3/ipv4-list-routing-helper.h"
 #include "ns3/ipv4-nix-vector-helper.h"
 
-#include "../model/load-balancing-application.h"
-
 #ifdef NS3_MPI
 #include <mpi.h>
 #endif
@@ -83,7 +81,7 @@ main (int argc, char *argv[])
 
   //temporary fix see bug 1560
   #define nCN (2)
-  #define nLANClients (1)
+  #define nLANClients (42)
   //uint32_t nCN = 2, nLANClients = 42;
   int32_t single = 0;
   int nBytes = 500000; // Bytes for each on/off app
@@ -612,7 +610,6 @@ main (int argc, char *argv[])
   std::cout << "Simulator init time: " << d1 << std::endl;
   std::cout << "Simulator run time: " << d2 << std::endl;
   std::cout << "Total elapsed time: " << d1 + d2 << std::endl;
-
   return 0;
 #else
   NS_FATAL_ERROR ("Can't use distributed simulator without MPI compiled in");

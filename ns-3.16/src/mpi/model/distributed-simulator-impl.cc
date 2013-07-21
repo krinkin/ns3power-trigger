@@ -24,18 +24,12 @@
 #include "ns3/event-impl.h"
 #include "ns3/channel.h"
 #include "ns3/node-container.h"
-#include "ns3/node-list.h"
 #include "ns3/ptr.h"
 #include "ns3/pointer.h"
 #include "ns3/assert.h"
 #include "ns3/log.h"
-#include <iostream>
 
 #include <cmath>
-#include <stdio.h>
-#include <boost/lexical_cast.hpp>
-#include <string>
-#include <fstream>
 
 #ifdef NS3_MPI
 #include <mpi.h>
@@ -74,8 +68,6 @@ LbtsMessage::GetMyId ()
   return m_myId;
 }
 
-
-
 Time DistributedSimulatorImpl::m_lookAhead = Seconds (0);
 
 TypeId
@@ -90,7 +82,6 @@ DistributedSimulatorImpl::GetTypeId (void)
 
 DistributedSimulatorImpl::DistributedSimulatorImpl ()
 {
-
 #ifdef NS3_MPI
   m_myId = MpiInterface::GetSystemId ();
   m_systemCount = MpiInterface::GetSize ();
@@ -98,8 +89,6 @@ DistributedSimulatorImpl::DistributedSimulatorImpl ()
   // Allocate the LBTS message buffer
   m_pLBTS = new LbtsMessage[m_systemCount];
   m_grantedTime = Seconds (0);
-
-  loadBalancingHelper.Install ();
 #else
   NS_FATAL_ERROR ("Can't use distributed simulator without MPI compiled in");
 #endif
@@ -116,7 +105,6 @@ DistributedSimulatorImpl::DistributedSimulatorImpl ()
   m_currentContext = 0xffffffff;
   m_unscheduledEvents = 0;
   m_events = 0;
-
 }
 
 DistributedSimulatorImpl::~DistributedSimulatorImpl ()
@@ -254,23 +242,9 @@ DistributedSimulatorImpl::ProcessOneEvent (void)
   NS_LOG_LOGIC ("handle " << next.key.m_ts);
   m_currentTs = next.key.m_ts;
   m_currentContext = next.key.m_context;
-  loadBalancingHelper.IncNodeLoad (m_currentContext);
   m_currentUid = next.key.m_uid;
-
-  if ((m_currentContext > 0) && (m_currentContext < NodeContainer::GetGlobal ().GetN ()))
-  {
-	  Ptr<Node> currentContextNode = NodeList::GetNode (m_currentContext);
-	  uint32_t currentContextSysId = currentContextNode->GetSystemId ();
-	  if (currentContextSysId == MpiInterface::GetSystemId())
-	  {
-	    next.impl->Invoke ();
-	    next.impl->Unref ();
-	  }
-  } else {
-    next.impl->Invoke ();
-    next.impl->Unref ();
-  }
-
+  next.impl->Invoke ();
+  next.impl->Unref ();
 }
 
 bool
@@ -296,8 +270,6 @@ DistributedSimulatorImpl::Next (void) const
 void
 DistributedSimulatorImpl::Run (void)
 {
-loadBalancingHelper.Start ();
-
 #ifdef NS3_MPI
   CalculateLookAhead ();
   m_stop = false;
@@ -539,4 +511,3 @@ DistributedSimulatorImpl::GetContext (void) const
 }
 
 } // namespace ns3
-

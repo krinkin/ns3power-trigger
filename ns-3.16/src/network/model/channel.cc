@@ -61,11 +61,4 @@ Channel::GetId (void) const
   return m_id;
 }
 
-uint32_t
-Channel::GetTraffic (void) const
-{
-	return 0;
-}
-
-
 } // namespace ns3

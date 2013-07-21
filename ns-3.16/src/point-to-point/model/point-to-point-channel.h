@@ -92,14 +92,7 @@ public:
    */
   virtual Ptr<NetDevice> GetDevice (uint32_t i) const;
 
-  /*
-   * \brief Get traffic size sended by this channel
-   * \returns traffic size
-   */
-  virtual uint32_t GetTraffic (void) const;
-
 protected:
-
   /*
    * \brief Get the delay associated with this channel
    * \returns Time delay
@@ -134,7 +127,6 @@ private:
 
   Time          m_delay;
   int32_t       m_nDevices;
-  uint32_t      m_traffic;
 
   /**
    * The trace source for the packet transmission animation events that the 
@@ -169,12 +161,9 @@ public:
     Ptr<PointToPointNetDevice> m_dst;
   };
 
-private:
-
   Link    m_link[N_DEVICES];
 };
 
 } // namespace ns3
 
 #endif /* POINT_TO_POINT_CHANNEL_H */
-
