@@ -72,6 +72,7 @@ Node::Node()
 {
   NS_LOG_FUNCTION (this);
   Construct ();
+  m_functionRorCallIfBatteryChargeLevel = MakeCallback(&Node::defaultFunctionRorCallIfBatteryChargeLevel, this);
 }
 
 Node::Node(uint32_t sid)
@@ -349,6 +350,16 @@ Node::NotifyDeviceAdded (Ptr<NetDevice> device)
     {
       (*i) (device);
     }  
+}
+
+
+void
+Node::LogBatteryChargeOnChangeLog(double oldValue, double newValue) {
+  if (std::lower_bound(m_batteryChargeLevels.begin(), m_batteryChargeLevels.end(), oldValue) - m_batteryChargeLevels.begin()  !=
+     std::lower_bound(m_batteryChargeLevels.begin(), m_batteryChargeLevels.end(), newValue) - m_batteryChargeLevels.begin() ) {
+	  Ptr<Node> nodePtr(this);
+	  m_functionRorCallIfBatteryChargeLevel(oldValue, newValue, nodePtr);
+  }
 }
  
 
