@@ -355,11 +355,19 @@ Node::NotifyDeviceAdded (Ptr<NetDevice> device)
 
 void
 Node::LogBatteryChargeOnChangeLog(double oldValue, double newValue) {
-  if (std::lower_bound(m_batteryChargeLevels.begin(), m_batteryChargeLevels.end(), oldValue) - m_batteryChargeLevels.begin()  !=
-     std::lower_bound(m_batteryChargeLevels.begin(), m_batteryChargeLevels.end(), newValue) - m_batteryChargeLevels.begin() ) {
-	  Ptr<Node> nodePtr(this);
-	  m_functionRorCallIfBatteryChargeLevel(oldValue, newValue, nodePtr);
+
+  size_t oldValueLevel = std::lower_bound(m_batteryChargeLevels.begin(), m_batteryChargeLevels.end(), oldValue) - m_batteryChargeLevels.begin();
+
+  if (oldValueLevel == m_batteryChargeLevels.size()) {
+    if (newValue >= m_batteryChargeLevels[oldValueLevel - 1]) return;
+  } else if (oldValueLevel == 0) {
+    if (newValue < m_batteryChargeLevels[0]) return;
+  } else {
+    if ( (newValue >= m_batteryChargeLevels[oldValueLevel - 1] ) && (newValue < m_batteryChargeLevels[oldValueLevel]) ) return;
   }
+
+  Ptr<Node> nodePtr(this);
+  m_functionRorCallIfBatteryChargeLevel(oldValue, newValue, nodePtr);
 }
  
 

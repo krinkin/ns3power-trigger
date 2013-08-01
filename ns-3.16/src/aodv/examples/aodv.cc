@@ -100,7 +100,7 @@ int main (int argc, char **argv)
 AodvExample::AodvExample () :
   size (10),
   step (100),
-  totalTime (300),
+  totalTime (5000),
   pcap (true),
   printRoutes (true)
 {
@@ -165,8 +165,10 @@ AodvExample::CreateNodes ()
       es->SetNode (nodes.Get (i));
 
 
-      double levelsArray[] = { 27000.0, 28000.0, 29000.0, 30000.0};
-      std::vector<double> levelsVector(levelsArray, levelsArray + 4);
+      std::vector<double> levelsVector;
+      for (int j = 1; j < 31; j++) {
+    	  levelsVector.push_back(j * 1000);
+      }
       nodes.Get (i)->setBatteryChargeLevels(levelsVector);
 
       es->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback(&Node::LogBatteryChargeOnChangeLog, nodes.Get (i)));
@@ -176,14 +178,7 @@ AodvExample::CreateNodes ()
       sem->SetNode (nodes.Get (i));
       nodes.Get (i)->AggregateObject (esCont);
 
-
-      Time now = Simulator::Now ();
-
-      sem->SetCurrentA (2.33);
-
-
-      // discharge at 4.66 A for 628 seconds
-      Simulator::Schedule (now, &SimpleDeviceEnergyModel::SetCurrentA, sem, 4.66);
+      sem->SetCurrentA ((rand() % 5000) / 1000.0);
 
     }
   // Create static grid

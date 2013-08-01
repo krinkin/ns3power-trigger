@@ -1822,7 +1822,11 @@ RoutingProtocol::FindSocketWithInterfaceAddress (Ipv4InterfaceAddress addr ) con
 
 void
 RoutingProtocol::LogBatteryChargeOnChangeLog(double oldValue, double newValue, Ptr<Node> node) {
-	std::cout << "Battery charge change level on node " << node->GetId() << ": from " << oldValue << " to " << newValue << std::endl;
+	if (newValue > 1000) {
+		std::cout << "Battery charge change level on node " << node->GetId() << ": from " << oldValue << " to " << newValue << std::endl;
+	} else {
+		std::cout << "Node " << node->GetId() << " is dead at " << Simulator::Now().GetSeconds() << " s" << std::endl;
+	}
 }
 
 
